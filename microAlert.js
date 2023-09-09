@@ -1,3 +1,5 @@
+
+
 $("body").addClass("stop-scrolling")
 $(window).on( "load", function() {
         $("#loader_page").remove()
@@ -34,16 +36,20 @@ var search_item_template = `
                   
                 </div></a>
                 `
-            $(".header__search-field_main").keyup(function() {
+           const makeAPICall = (searchValue) => {
+       
+        if (!searchValue) {
+            return;
+        }
      
         var data = new FormData()
-        var text = $(this).val()
+        var text = searchValue
         $(".header__search-field_main").val(text)
-        var value_o = $(this).val()
+        var value_o = searchValue
         data.append("search_text", text)
         $(".header__search__results").html("")
         $(".header__search__results").css("display", "block")
-        console.log($("#selected-value span").attr("value"), "value")
+        
         categroy_value = ""
         if($("#selected-value span").attr("value") != undefined){
           var categroy_value = $("#selected-value span").attr("value")
@@ -75,7 +81,7 @@ var search_item_template = `
 
         }
     
-})
+}
 
       function searchSuccess(statuss, value_o)
 
@@ -88,7 +94,7 @@ var search_item_template = `
 
 
     l = JSON.parse(statuss)
-    console.log(l)
+    
 
 if(l != ''){
   for (var i = 0, len = l.length; i < len; ++i) {
@@ -212,6 +218,26 @@ var template_for_catalog =`  <li class="header__collections-item is-level-1" dat
 
                   
                 </li>`
+const debounce = (fn, delay = 500) => {
+        let timerId = null;
+        return function (...args) {
+            clearTimeout(timerId);
+            timerId = setTimeout(function () {
+                fn.apply(this, args);
+            }, delay);
+        };
+    };
+
+const onInput = debounce(makeAPICall, 500);
+
+    $(".header__search-field_main").on("input", function (e) {
+        onInput(e.target.value);
+    });
+
+
+
+
+
 
 $(".header_mobile .header__collections-link").on("click", function(){
 	var data  = new FormData()

@@ -14,7 +14,7 @@ function ajax_register(username, password, email, name, lastname, phone){
            success: function(data) {
             if (data.data==1){
                 console.log("success")
-                location.replace("/")
+                location.replace("/my_account/")
 
             }
             else if (data.data=="error"){
@@ -37,6 +37,21 @@ function ajax_register(username, password, email, name, lastname, phone){
            })
 }
 
+function validateUsername(username) {
+  // Check if the username is not empty
+  var nameRegex = /^[a-zA-Z ]+$/;
+
+
+  // Check if the name matches the regular expression
+  
+  if (nameRegex.test(username)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// Output: "Username is valid"
 
 
 $(document).on("click", ".btn_registration", function(){
@@ -49,18 +64,144 @@ $(document).on("click", ".btn_registration", function(){
     var lastname = $("#register-lastname").val()
     var phone = $("#register-phone").val()
     var agree = $("#register-agree")
-    
-    
-    if ($(this).text()!="Register"){
-        profile_category = "salesman"
+    var validation = true
+    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+    const phoneInputField = document.querySelector("#register-phone");
+   const phoneInput = window.intlTelInput(phoneInputField, {
+     utilsScript:
+       "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+   });
+   if (phoneInput.isValidNumber()) {
+      
+      validation = true
+    } else {
+      validation = false
+      
+      const errorCode = phoneInput.getValidationError();
+      error_text = ""
+      if (lang_all_page=="ru"){
+        if (errorMap[errorCode] == "Invalid number"){
+            error_text = "Номер телефона должен быть цифрами"
+          }
+          else if(errorMap[errorCode] == "Too short"){
+            error_text = "Номер телефона короткий"
 
+          }
+          else if(errorMap[errorCode] == "Too long"){
+            error_text = "Номер телефона длинный"
+            
+          }
+          else if(errorMap[errorCode] == "Invalid number"){
+            error_text = "Номер телефона неправильный"
+            
+          }
+          else{
+            error_text = "Неверный код страны"
+
+          }
+        
+          
+        }
+        else if (lang_all_page=="en"){
+          if (errorMap[errorCode] == "Invalid number"){
+            error_text = "Phone number must be numbers"
+          }
+          else if(errorMap[errorCode] == "Too short"){
+            error_text = "Phone number is short"
+
+          }
+          else if(errorMap[errorCode] == "Too long"){
+            error_text = "Phone number is long"
+            
+          }
+          else if(errorMap[errorCode] == "Invalid number"){
+            error_text = "Phone number is wrong"
+            
+          }
+          else{
+            error_text = "Invalid country code"
+
+          }
+
+          
+         
+
+        }
+        else if (lang_all_page=="hy"){
+         if (errorMap[errorCode] == "Invalid number"){
+            error_text = "Հեռախոսահամարը պետք է լինի թվեր"
+          }
+          else if(errorMap[errorCode] == "Too short"){
+            error_text = "Հեռախոսահամարը կարճ է"
+
+          }
+          else if(errorMap[errorCode] == "Too long"){
+            error_text = "Հեռախոսահամարը երկար  է"
+            
+          }
+          else if(errorMap[errorCode] == "Invalid number"){
+            error_text = "Հեռախոսահամարը սխալ է"
+            
+          }
+          else{
+            error_text = "Երկրի կոդը սխալ է"
+
+          }
+          
+        }
+       
+        $(".error_window").text(error_text)
+        $(".error_window").css("display", "block")
+        
+      
+      
+     
     }
+
+
+const validationResult_name = validateUsername(name);
+const validationResult_last_name = validateUsername(lastname);
+
+console.log(validationResult_name, validationResult_last_name); 
+if (validationResult_name && validationResult_last_name){
+  validation = true
+  
+}
+else{
+  validation = false
+  
+   if (lang_all_page=="ru"){
+    error_text = "Неверное имя или фамилия."
+       
+          
+        }
+        else if (lang_all_page=="en"){
+          error_text = "Invalid first name or last name."
+         
+
+          
+         
+
+        }
+        else if (lang_all_page=="hy"){
+          error_text = "Սխալ անուն կամ ազգանուն."
+         
+          
+        }
+  $(".error_window").text(error_text)
+  $(".error_window").css("display", "block")
+
+}
+
+    
+    
+    
     
 
 
     
 
-    if (username.length != 0 && password.length != 0 && email.length != 0 && name.length != 0 && lastname.length != 0 && phone.length != 0 && agree.length>0){
+    if (username.length != 0 && password.length != 0 && email.length != 0 && name.length != 0 && lastname.length != 0 && phone.length != 0 && agree.length>0 && validation){
 if (agree.is(':checked')) {ajax_register(username, password, email, name, lastname, phone)}
   else{
     $(".label_policy").css("color", "red")
@@ -105,7 +246,7 @@ $(document).on("click", ".btn_login", function(){
            success: function(data) {
             if (data.data==1){
                 console.log("success")
-                location.replace("/")
+                location.replace("/my_account/")
 
             }
             else{
@@ -128,4 +269,5 @@ $(document).on("click", ".btn_login", function(){
 
 
 })
+
 
